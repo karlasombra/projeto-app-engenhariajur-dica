@@ -61,9 +61,9 @@ Persona do storyboard: **Dona Maria, 68 anos** (fictícia).
 
 ## Escopo
 
-**Dentro do escopo (o que será entregue):** A DEFINIR (depende do tipo de protótipo exigido)
+**Dentro do escopo (o que será entregue):** MVP de apresentação, instalável no celular, com todas as 9 funcionalidades acima em versão simulada (ver `docs/03`).
 
-**Fora do escopo:** A DEFINIR
+**Fora do escopo:** análise real de links e mensagens (servidor, IA ou base de golpes), envio real de avisos, atendimento real, cadastro e login reais, publicação na Play Store.
 
 ## Como medimos sucesso
 

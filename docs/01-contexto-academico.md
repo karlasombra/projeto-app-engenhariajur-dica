@@ -29,8 +29,8 @@ O exemplo do professor é um app para ajudar idosos a se organizarem financeiram
 | 2 | Perfil do cliente | Tarefas, dores e ganhos | [`base do app/perfil do cliente.txt`](../base%20do%20app/perfil%20do%20cliente.txt) | Feito |
 | 3 | Quadro comparativo | Apps existentes × critérios | [`base do app/quadro comparativo.pdf`](../base%20do%20app/quadro%20comparativo.pdf) | Feito |
 | 4 | Modelo de negócios Canvas | 9 blocos | [`base do app/modelo de negócios.pdf`](../base%20do%20app/modelo%20de%20neg%C3%B3cios.pdf) | Feito |
-| 5 | Storyboard (Sprint) | Jornada do usuário no app, em telas, "como uma HQ" | [`storyboard/`](../storyboard/) | Feito (03/11) — aguardando aprovação do grupo |
-| — | Aplicativo / protótipo | Construção do app | `app/` | Depois |
+| 5 | Storyboard (Sprint) | Jornada do usuário no app, em telas, "como uma HQ" | [`storyboard/`](../storyboard/) | Feito (03/11). Design escolhido: Proposta D |
+| — | Aplicativo / protótipo | MVP instalável no celular, tudo simulado | [`app/`](../app/) | Feito (07/11) |
 
 ## Critérios de avaliação
 
@@ -44,14 +44,14 @@ O exemplo do professor é um app para ajudar idosos a se organizarem financeiram
 |---|---|---|
 | Árvore de problemas | 05/10/2026 | Entregue |
 | Storyboard | 03/11/2026 | Pronto para entrega |
-| Demais entregas | A DEFINIR | |
+| App (apresentação final) | 08/11/2026, à noite | App pronto em 07/11 |
 
 ## Restrições impostas pela disciplina
 
 - Seguir as etapas do Design Thinking e os modelos dos slides (o exemplo do professor serve de padrão visual).
 - Plataforma: app mobile (Play Store, conforme o Canvas do grupo).
 - Tecnologia obrigatória: A DEFINIR
-- Formato da apresentação final: A DEFINIR
+- Formato da apresentação final: app rodando **no celular** (decisão do grupo, ver 0005).
 
 ## Observações do professor
 

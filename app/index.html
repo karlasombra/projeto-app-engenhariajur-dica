@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Será Golpe?</title>
+<meta name="description" content="App para ajudar pessoas idosas a reconhecer o estelionato digital.">
+<meta name="theme-color" content="#3f37c9">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Será Golpe?">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icones/icone.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icones/apple-touch-icon-180.png">
+<link rel="icon" href="icones/favicon.ico" sizes="any">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ind:#3f37c9; --ind2:#2b2499; --indl:#e9e7ff;
+  --g:#1f9d55; --gl:#dcf5e6; --y:#ffb703; --yd:#8a5a00; --yl:#fff1cc; --r:#e3342f; --rl:#ffe1df;
+  --ink:#1b1b2f; --mut:#55566b; --line:#dcdbee; --bg:#f6f6fb;
+  --pink:#d1449a; --cyan:#0f8fb3; --orange:#e8641c; --wa:#1f9d55;
+}
+html{font-size:17px}
+html.f2{font-size:19px}
+html.f3{font-size:21.5px}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:"Nunito","Segoe UI",Roboto,Arial,sans-serif;background:#ecebf8;color:var(--ink);min-height:100dvh;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+input,textarea{font:inherit;color:inherit}
+#app{position:relative;width:100%;max-width:440px;height:100dvh;margin:0 auto;background:var(--bg);overflow:hidden}
+@media (min-width:700px){
+  body{display:flex;align-items:center;justify-content:center;padding:20px}
+  #app{height:min(900px,calc(100dvh - 40px));border-radius:42px;border:12px solid #16181b;box-shadow:0 20px 50px rgba(30,25,90,.3)}
+}
+.scr{position:absolute;inset:0;display:flex;flex-direction:column;animation:in .22s ease}
+@keyframes in{from{opacity:0;transform:translateX(14px)}to{opacity:1;transform:none}}
+.content{flex:1;overflow-y:auto;padding:calc(env(safe-area-inset-top) + 14px) 16px 22px;display:flex;flex-direction:column;gap:.75rem}
+.content.nopad{padding-top:14px}
+.content>*{flex-shrink:0}
+svg.i{width:1.3rem;height:1.3rem;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.h1{font-size:1.55rem;font-weight:900;line-height:1.15}
+.h2{font-size:1.15rem;font-weight:900}
+.p{font-size:1rem;line-height:1.45}
+.mut{color:var(--mut)}
+.small{font-size:.85rem}
+.row{display:flex;align-items:center;gap:.6rem}
+.between{justify-content:space-between}
+.lights{display:inline-flex;gap:4px;background:#1b1b2f;padding:5px 7px;border-radius:999px}
+.lights span{width:11px;height:11px;border-radius:50%}
+.card{background:#fff;border-radius:20px;padding:.9rem;box-shadow:0 2px 0 var(--line)}
+.tile{background:#fff;border-radius:20px;padding:.8rem;display:flex;flex-direction:column;gap:.35rem;box-shadow:0 2px 0 var(--line);text-align:left;min-height:44px}
+.tile:active,.btn:active,.key:active,.chip:active{transform:translateY(2px)}
+.blob{width:3rem;height:3rem;border-radius:15px;display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0}
+.blob svg.i{width:1.6rem;height:1.6rem}
+.tile .t{font-size:1rem;font-weight:900;line-height:1.15}
+.tile .s{font-size:.85rem;color:var(--mut);font-weight:600}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+.btn{min-height:3.1rem;border-radius:16px;display:flex;align-items:center;justify-content:center;gap:.5rem;font-weight:900;font-size:1.05rem;padding:0 1rem;width:100%;transition:transform .05s}
+.btn.pri{background:var(--ind);color:#fff;box-shadow:0 4px 0 var(--ind2)}
+.btn.pri:disabled{background:#b9b6ec;box-shadow:0 4px 0 #a19dde;cursor:not-allowed}
+.btn.out{background:#fff;color:var(--ind);border:2px solid var(--ind)}
+.btn.ghost{color:var(--ind);min-height:2.75rem}
+.btn.red{background:var(--r);color:#fff;box-shadow:0 4px 0 #a8201b}
+.btn.green{background:var(--g);color:#fff;box-shadow:0 4px 0 #13703b}
+.backbar{display:flex;align-items:center;justify-content:space-between;gap:.6rem;min-height:2.75rem}
+.back{width:2.75rem;height:2.75rem;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 0 var(--line);color:var(--ink)}
+.prog{height:7px;border-radius:4px;background:var(--line);overflow:hidden}
+.prog div{height:100%;border-radius:4px;background:var(--ind);transition:width .4s}
+/* tabs */
+.tabs{display:flex;justify-content:space-around;align-items:flex-end;background:#fff;padding:6px 4px calc(8px + env(safe-area-inset-bottom));border-top:1px solid #e3e2f2;flex-shrink:0}
+.tabs button{flex:1 1 0;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:.78rem;color:var(--mut);font-weight:800;min-width:0;min-height:44px;justify-content:flex-end}
+.tabs button svg.i{width:1.45rem;height:1.45rem}
+.tabs .on{color:var(--ind)}
+.tabs .fab{flex:0 0 4rem;width:4rem;height:4rem;padding:0;gap:0;border-radius:50%;background:var(--ind);color:#fff;display:flex;align-items:center;justify-content:center;margin:-2rem .4rem 0;box-shadow:0 6px 14px rgba(63,55,201,.45);border:4px solid #fff}
+.fab svg.i{width:1.8rem !important;height:1.8rem !important}
+/* login */
+.loginTop{background:var(--ind);color:#fff;border-radius:0 0 32px 32px;padding:calc(env(safe-area-inset-top) + 16px) 16px 22px;display:flex;flex-direction:column;align-items:center;position:relative}
+.dots{display:flex;gap:14px;margin-top:14px}
+.dots span{width:18px;height:18px;border-radius:50%;border:2.5px solid #fff;transition:background .15s}
+.dots span.on{background:#fff}
+.shake{animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.keys{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem}
+.key{height:3.6rem;border-radius:16px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:1.6rem;font-weight:800;box-shadow:0 2px 0 var(--line)}
+.aplus{position:absolute;right:14px;top:calc(env(safe-area-inset-top) + 12px);background:rgba(255,255,255,.18);color:#fff;border-radius:12px;padding:.35rem .6rem;font-weight:900;font-size:.95rem;min-height:44px;min-width:44px}
+/* verify */
+.mode{flex:1;align-items:center;padding:.7rem .3rem;border:2.5px solid transparent;text-align:center}
+.mode.sel{border-color:var(--ind)}
+.mode .blob{width:2.6rem;height:2.6rem}
+.paste{background:#fff;border:2.5px dashed #b9b6ec;border-radius:18px;padding:.7rem .8rem}
+.paste label{font-size:.75rem;color:var(--mut);font-weight:900;letter-spacing:.5px;display:block;margin-bottom:.2rem}
+.paste textarea{width:100%;border:0;outline:0;resize:none;font-size:1rem;line-height:1.45;min-height:6.5rem;background:transparent;font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:.45rem}
+.chip{background:#fff;border:2px solid var(--line);border-radius:999px;padding:.45rem .8rem;font-size:.85rem;font-weight:800;min-height:44px}
+/* analyzing */
+.bigLight{background:#1b1b2f;border-radius:28px;padding:12px;display:flex;flex-direction:column;gap:10px;margin:0 auto}
+.bigLight span{width:3.3rem;height:3.3rem;border-radius:50%;background:#3a3a4f;transition:all .2s}
+.checks div{display:flex;gap:.6rem;align-items:center;font-weight:800;opacity:.25;transition:opacity .3s;padding:.35rem 0}
+.checks div.ok{opacity:1}
+.checks div.ok .ck{background:var(--g);color:#fff}
+.ck{width:1.6rem;height:1.6rem;border-radius:50%;background:var(--line);display:flex;align-items:center;justify-content:center}
+.ck svg.i{width:1rem;height:1rem;stroke-width:3}
+/* result */
+.resTop{color:#fff;border-radius:0 0 32px 32px;padding:calc(env(safe-area-inset-top) + 14px) 18px 18px}
+.resTop.yellow{color:var(--ink)}
+.light3{background:#1b1b2f;border-radius:18px;padding:8px;display:flex;flex-direction:column;gap:6px}
+.light3 span{width:1.7rem;height:1.7rem;border-radius:50%;background:#3a3a4f}
+.sig{flex:1;align-items:center;padding:.6rem .3rem;text-align:center;gap:.3rem}
+.sig .blob{width:2.4rem;height:2.4rem;border-radius:12px}
+.sig .s{color:var(--ink) !important;font-weight:800 !important;font-size:.8rem !important;line-height:1.15}
+.todo div{display:flex;gap:.55rem;align-items:flex-start;font-size:1rem;font-weight:700;padding:.3rem 0;line-height:1.3}
+/* lists */
+.li{display:flex;align-items:center;gap:.8rem;background:#fff;border-radius:18px;padding:.8rem;box-shadow:0 2px 0 var(--line);text-align:left;width:100%;min-height:44px}
+.li .t{font-weight:900;font-size:1rem;line-height:1.2}
+.li .s{font-size:.85rem;color:var(--mut);font-weight:600}
+.av{width:3rem;height:3rem;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;flex-shrink:0}
+.pill{display:inline-block;font-size:.72rem;font-weight:900;padding:.15rem .55rem;border-radius:999px;background:var(--indl);color:var(--ind)}
+.tog{width:3.1rem;height:1.8rem;border-radius:999px;background:#c9c8dc;position:relative;flex-shrink:0;transition:background .2s}
+.tog::after{content:"";position:absolute;width:1.4rem;height:1.4rem;border-radius:50%;background:#fff;top:.2rem;left:.2rem;transition:left .2s}
+.tog.on{background:var(--g)}
+.tog.on::after{left:1.5rem}
+.seg{display:flex;background:#ecebf8;border-radius:14px;padding:4px;gap:4px}
+.seg button{flex:1;border-radius:11px;padding:.5rem .2rem;font-weight:900;min-height:44px}
+.seg .on{background:#fff;color:var(--ind);box-shadow:0 2px 0 var(--line)}
+/* lesson video */
+.video{border-radius:20px;aspect-ratio:16/10;position:relative;overflow:hidden;color:#fff;display:flex;align-items:center;justify-content:center;text-align:center;padding:1.2rem}
+.video .play{width:4.2rem;height:4.2rem;border-radius:50%;background:rgba(255,255,255,.95);color:var(--ink);display:flex;align-items:center;justify-content:center}
+.video .cap{font-size:1.15rem;font-weight:900;line-height:1.3;text-shadow:0 2px 8px rgba(0,0,0,.25)}
+.video .bar{position:absolute;left:0;bottom:0;height:6px;background:rgba(255,255,255,.95);width:0}
+/* chat */
+.chatTop{background:var(--wa);color:#fff;padding:calc(env(safe-area-inset-top) + 10px) 12px 10px;display:flex;align-items:center;gap:.6rem}
+.msgs{flex:1;overflow-y:auto;padding:14px 12px;display:flex;flex-direction:column;gap:.5rem;background:#efeae2}
+.bub{max-width:82%;padding:.55rem .75rem;border-radius:14px;font-size:1rem;line-height:1.4;font-weight:600;box-shadow:0 1px 0 rgba(0,0,0,.08)}
+.bub.them{background:#fff;align-self:flex-start;border-top-left-radius:4px}
+.bub.me{background:#d9fdd3;align-self:flex-end;border-top-right-radius:4px}
+.chatIn{display:flex;gap:.5rem;padding:8px 10px calc(8px + env(safe-area-inset-bottom));background:#f0f0f0}
+.chatIn input{flex:1;border:0;border-radius:999px;padding:0 1rem;min-height:3rem;outline:0}
+.chatIn button{width:3rem;height:3rem;border-radius:50%;background:var(--wa);color:#fff;display:flex;align-items:center;justify-content:center}
+/* sheet & toast */
+.overlay{position:absolute;inset:0;background:rgba(20,18,50,.45);display:flex;align-items:flex-end;z-index:20;animation:fade .2s}
+@keyframes fade{from{opacity:0}}
+.sheet{background:var(--bg);width:100%;border-radius:28px 28px 0 0;padding:10px 16px calc(18px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:.75rem;max-height:90%;overflow-y:auto;animation:up .25s ease}
+@keyframes up{from{transform:translateY(40%)}}
+.grab{width:44px;height:5px;border-radius:3px;background:#c9c8dc;margin:0 auto 4px}
+.toast{position:absolute;left:16px;right:16px;bottom:calc(96px + env(safe-area-inset-bottom));background:#1b1b2f;color:#fff;border-radius:16px;padding:.8rem 1rem;font-weight:800;z-index:30;animation:up .2s ease;text-align:center}
+.field{display:flex;flex-direction:column;gap:.25rem}
+.field span{font-size:.85rem;font-weight:800;color:var(--mut)}
+.field input,.field select{border:2px solid var(--line);border-radius:14px;padding:0 .9rem;min-height:3rem;background:#fff;outline:0;font-weight:700}
+.field input:focus{border-color:var(--ind)}
+/* splash & finger */
+.splash{background:var(--ind);color:#fff;align-items:center;justify-content:center;gap:1rem}
+.finger{position:absolute;inset:0;background:rgba(20,18,50,.6);z-index:25;display:flex;align-items:center;justify-content:center;animation:fade .2s}
+.fbox{background:#fff;border-radius:28px;padding:1.6rem 1.4rem;width:82%;text-align:center;display:flex;flex-direction:column;align-items:center;gap:.8rem}
+.fcirc{width:5.5rem;height:5.5rem;border-radius:50%;background:var(--indl);color:var(--ind);display:flex;align-items:center;justify-content:center;transition:all .3s}
+.fcirc svg.i{width:3rem;height:3rem}
+.fcirc.ok{background:var(--g);color:#fff}
+.pulse{animation:pulse 1s infinite}
+@keyframes pulse{50%{transform:scale(1.08)}}
+.rec{width:5rem;height:5rem;border-radius:50%;background:var(--orange);color:#fff;display:flex;align-items:center;justify-content:center;margin:0 auto;animation:pulse 1s infinite}
+.rec svg.i{width:2.4rem;height:2.4rem}
+.step{display:flex;gap:.8rem;align-items:flex-start}
+.num{width:2.1rem;height:2.1rem;border-radius:50%;background:var(--ind);color:#fff;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.law{background:var(--indl);border-radius:18px;padding:.9rem;font-size:.95rem;line-height:1.45}
+.acc summary{list-style:none;font-weight:900;display:flex;justify-content:space-between;gap:.5rem;align-items:center;min-height:44px;cursor:pointer}
+.acc summary::-webkit-details-marker{display:none}
+.acc[open] summary .chev{transform:rotate(90deg)}
+.acc p{padding-top:.4rem}
+.chev{transition:transform .2s;color:var(--mut)}
+.demo{font-size:.72rem;color:var(--mut);text-align:center;font-weight:700}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <symbol id="finger" viewBox="0 0 24 24"><path d="M12 11v4M8 9a4 4 0 018 0v5M5 12a7 7 0 0114 0v3M9 20c1-2 1-4 1-6M15 20c.5-1.5.8-3 .9-4.5"/></symbol>
+  <symbol id="mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0014 0M12 18v3"/></symbol>
+  <symbol id="news" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 8h10M7 12h10M7 16h6"/></symbol>
+  <symbol id="play" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M10 9l5 3-5 3z"/></symbol>
+  <symbol id="playf" viewBox="0 0 24 24"><path d="M8 5l11 7-11 7z" fill="currentColor"/></symbol>
+  <symbol id="users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0112 0"/><circle cx="17" cy="9" r="2.5"/><path d="M16 14a5 5 0 016 5"/></symbol>
+  <symbol id="help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 015 .5c0 2-2.5 2-2.5 4M12 17h.01"/></symbol>
+  <symbol id="home" viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9h-6v-6H9v6H3z"/></symbol>
+  <symbol id="search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></symbol>
+  <symbol id="alert" viewBox="0 0 24 24"><path d="M12 3l10 18H2z"/><path d="M12 10v4M12 17.5h.01"/></symbol>
+  <symbol id="clip" viewBox="0 0 24 24"><rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 4V3h6v1M9 10h6M9 14h6"/></symbol>
+  <symbol id="chat" viewBox="0 0 24 24"><path d="M4 20l1.5-4A8 8 0 1112 20a8 8 0 01-4-1z"/></symbol>
+  <symbol id="flag" viewBox="0 0 24 24"><path d="M5 21V4h11l-2 4 2 4H5"/></symbol>
+  <symbol id="cam" viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></symbol>
+  <symbol id="link" viewBox="0 0 24 24"><path d="M10 14a4 4 0 006 0l3-3a4 4 0 00-6-6l-1 1"/><path d="M14 10a4 4 0 00-6 0l-3 3a4 4 0 006 6l1-1"/></symbol>
+  <symbol id="phone" viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z"/></symbol>
+  <symbol id="cash" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/></symbol>
+  <symbol id="x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+  <symbol id="check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+  <symbol id="del" viewBox="0 0 24 24"><path d="M9 6h11v12H9l-6-6z"/><path d="M12 10l4 4M16 10l-4 4"/></symbol>
+  <symbol id="left" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></symbol>
+  <symbol id="right" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></symbol>
+  <symbol id="clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+  <symbol id="lock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></symbol>
+  <symbol id="gift" viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="5" rx="1"/><path d="M5 13v8h14v-8M12 8v13M12 8S10.5 3 8 4s0 4 4 4c4 0 6.5-3 4-4s-4 4-4 4"/></symbol>
+  <symbol id="share" viewBox="0 0 24 24"><circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="M8.2 10.8l7.6-4.4M8.2 13.2l7.6 4.4"/></symbol>
+  <symbol id="shh" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9 10h.01M15 10h.01M9 15.5h6"/></symbol>
+  <symbol id="vol" viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16.5 8.5a5 5 0 010 7M19 6a8.5 8.5 0 010 12"/></symbol>
+  <symbol id="user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></symbol>
+  <symbol id="plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="send" viewBox="0 0 24 24"><path d="M4 12l16-8-6 16-2.5-6.5z"/></symbol>
+  <symbol id="shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></symbol>
+  <symbol id="star" viewBox="0 0 24 24"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/></symbol>
+  <symbol id="bell" viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0112 0v5l2 2H4z"/><path d="M10 20a2 2 0 004 0"/></symbol>
+  <symbol id="out" viewBox="0 0 24 24"><path d="M15 4h4v16h-4M10 8l-4 4 4 4M6 12h10"/></symbol>
+  <symbol id="text" viewBox="0 0 24 24"><path d="M4 7V5h12v2M10 5v14M7 19h6M15 12v-1h6v1M18 11v8M16.5 19h3"/></symbol>
+  <symbol id="hist" viewBox="0 0 24 24"><path d="M3 12a9 9 0 103-6.7L3 8"/><path d="M3 3v5h5M12 7v5l3 2"/></symbol>
+  <symbol id="book" viewBox="0 0 24 24"><path d="M4 5a2 2 0 012-2h13v16H6a2 2 0 00-2 2z"/><path d="M4 19V5M8 7h7"/></symbol>
+  <symbol id="logo" viewBox="6 6 88 88"><line x1="62" y1="62" x2="85" y2="85" stroke="currentColor" stroke-width="12" stroke-linecap="round"/><circle cx="42" cy="42" r="29" fill="#1b1b2f" stroke="currentColor" stroke-width="8"/><circle cx="28" cy="42" r="6.5" fill="#22b35e"/><circle cx="42" cy="42" r="6.5" fill="#ffb703"/><circle cx="56" cy="42" r="6.5" fill="#ef3e36"/></symbol>
+  <symbol id="scale" viewBox="0 0 24 24"><path d="M12 3v18M7 21h10M5 7h14M5 7l-3 6a3 3 0 006 0zM19 7l-3 6a3 3 0 006 0z"/></symbol>
+</defs></svg>
+
+<div id="app"></div>
+
+<script>
+/* ============ DADOS SIMULADOS (mock) ============ */
+const USER = {
+  nome:'Maria das Graças Silva', apelido:'Maria', iniciais:'MG', idade:68,
+  nascimento:'12/03/1958', cidade:'Fortaleza – CE', celular:'(85) 9 ••••-4321',
+  plano:'Gratuito'
+};
+const CORES_AV = ['#d1449a','#0f8fb3','#e8641c','#1f9d55','#3f37c9','#8a46c9'];
+let CONTATOS = [
+  {nome:'Carlos Silva', rel:'Filho', aviso:true,  cor:'#0f8fb3', principal:true},
+  {nome:'Ana Paula Silva', rel:'Filha', aviso:true,  cor:'#d1449a'},
+  {nome:'Dona Neide', rel:'Vizinha', aviso:false, cor:'#e8641c'}
+];
+const EXEMPLOS = [
+  {rot:'Filho com número novo', txt:'Oi mãe, troquei de número! Me faz um Pix de R$ 1.500 urgente? Depois te devolvo. bit.ly/pagto-urg'},
+  {rot:'Conta bloqueada', txt:'BANCO: Sua conta foi BLOQUEADA por segurança. Regularize em até 2 horas no link http://banco-seguro-atualiza.xyz e informe seu CPF e senha.'},
+  {rot:'Prêmio de pontos', txt:'Parabéns, Maria! Você foi sorteada no programa de pontos e ganhou um prêmio. Responda esta mensagem para saber mais.'},
+  {rot:'Recado da neta', txt:'Oi vó! Chego aí no domingo pro almoço. Vou levar o bolo de milho que a senhora gosta. Beijos, Júlia'}
+];
+const EXEMPLOS_NOTICIA = [
+  {rot:'INSS paga extra', txt:'URGENTE!!! INSS vai pagar R$ 2.000 a TODOS os aposentados. Cadastre-se no link antes que apaguem: inss-beneficio.top. Compartilhe!'},
+  {rot:'Remédio milagroso', txt:'Chá de folha cura diabetes em 7 dias e os médicos não querem que você saiba! Repasse para seus amigos.'},
+  {rot:'Vacina da gripe', txt:'A campanha de vacinação contra a gripe para pessoas idosas começa na segunda-feira nos postos de saúde, informou a Secretaria da Saúde.'}
+];
+const AULAS = [
+  {id:'parente', t:'O golpe do falso parente', d:'2 min', cor:'#d1449a', ic:'users', pts:[
+    'O golpista diz que é seu filho ou neto, com um número novo.',
+    'Ele pede dinheiro com pressa, quase sempre por Pix.',
+    'Antes de qualquer coisa, ligue para o número antigo da pessoa.',
+    'Se não conseguir falar com ela, peça ajuda a outro familiar.']},
+  {id:'link', t:'Como desconfiar de um link', d:'3 min', cor:'#0f8fb3', ic:'link', pts:[
+    'Links encurtados, como bit.ly, escondem o endereço verdadeiro.',
+    'Bancos e o governo não mandam link pedindo seus dados.',
+    'Nomes estranhos ou terminados em .xyz e .top são sinal de alerta.',
+    'Na dúvida, cole o link no Será Golpe? antes de abrir.']},
+  {id:'codigo', t:'Nunca passe o código do WhatsApp', d:'2 min', cor:'#1f9d55', ic:'lock', pts:[
+    'O código de 6 números que chega por SMS é a chave do seu WhatsApp.',
+    'Quem pede esse código quer roubar sua conta.',
+    'Nenhuma empresa séria pede esse código por mensagem ou ligação.',
+    'Peça para a família ativar a verificação em duas etapas.']},
+  {id:'banco', t:'A falsa central do banco', d:'3 min', cor:'#e8641c', ic:'phone', pts:[
+    'Golpistas ligam dizendo ser do banco e falam de uma compra estranha.',
+    'O banco nunca pede sua senha nem pede para você transferir dinheiro.',
+    'Desligue e ligue você mesma para o número que está atrás do cartão.',
+    'Nunca entregue seu cartão para um “motoboy do banco”.']},
+  {id:'compras', t:'Comprar pela internet com segurança', d:'4 min', cor:'#3f37c9', ic:'cash', pts:[
+    'Preço muito abaixo do normal é sinal de golpe.',
+    'Prefira lojas conhecidas e o aplicativo oficial delas.',
+    'Desconfie de quem só aceita Pix para pessoa física.',
+    'Peça a opinião de alguém da família antes de pagar.']},
+  {id:'noticia', t:'Como reconhecer uma notícia falsa', d:'3 min', cor:'#8a46c9', ic:'news', pts:[
+    'Desconfie de textos com MUITAS letras maiúsculas e exclamações.',
+    '“Compartilhe antes que apaguem” é sinal de notícia falsa.',
+    'Procure a mesma notícia em jornais conhecidos ou sites do governo.',
+    'Na dúvida, não repasse.']}
+];
+const ALERTAS = [
+  {id:'parente', quando:'Esta semana', t:'Golpe do falso parente no WhatsApp', aula:'parente',
+   txt:'Muitas pessoas estão recebendo mensagens de alguém dizendo ser filho ou neto, com um número novo, pedindo um Pix urgente. Antes de mandar qualquer dinheiro, ligue para o número antigo da pessoa.'},
+  {id:'inss', quando:'Semana passada', t:'Mensagem falsa sobre benefício do INSS', aula:'link',
+   txt:'Mensagens prometem valores extras para aposentados e pedem para clicar em um link e informar seus dados. Consulte seu benefício só pelo aplicativo Meu INSS ou pelo telefone 135.'},
+  {id:'entrega', quando:'Há 2 semanas', t:'Taxa falsa de entrega de encomenda', aula:'compras',
+   txt:'Um SMS diz que sua encomenda está retida e pede uma pequena taxa por um link. Não pague. Confira a entrega no site oficial da transportadora ou da loja.'}
+];
+
+/* ============ ANÁLISE SIMULADA (regras simples) ============ */
+const SINAIS = [
+  {id:'dinheiro', ic:'cash',  rot:'Pede dinheiro',            re:/(\bpix\b|transfer[eê]ncia|transfer[ea]|dep[oó]sit|boleto|\bpagu?e\b|\bpagar\b|pagamento|\btaxa\b|r\$\s?\d)/i},
+  {id:'pressa',   ic:'clock', rot:'Tem pressa',               re:/(urgente|urg[eê]ncia|imediat|r[aá]pido|hoje mesmo|em at[eé] \d|antes que|[uú]ltima chance|\bem \d+ dias\b)/i},
+  {id:'parente',  ic:'phone', rot:'Número novo de parente',   re:/(troquei de n[uú]mero|n[uú]mero novo|novo n[uú]mero|celular novo|meu n[uú]mero novo|salva (esse|este) n[uú]mero)/i},
+  {id:'link',     ic:'link',  rot:'Link estranho',            re:/(bit\.ly|tinyurl|https?:\/\/|www\.|\b[\w-]+\.(xyz|top|click|link|info|online|site)\b|\b[\w-]+-[\w-]+\.(com|net)\b)/i},
+  {id:'dados',    ic:'lock',  rot:'Pede seus dados',          re:/(senha|c[oó]digo|token|\bcpf\b|dados banc|n[uú]mero do cart|confirme seus dados|atualize seus dados|informe seu)/i},
+  {id:'ameaca',   ic:'alert', rot:'Ameaça de bloqueio',       re:/(bloquead|bloqueio|suspens|cancelad|irregular|\bmulta\b|retid|pend[eê]ncia)/i},
+  {id:'premio',   ic:'gift',  rot:'Promessa boa demais',      re:/(parab[eé]ns|ganhou|pr[eê]mio|sortead|brinde|gr[aá]tis|valor a receber|dinheiro esquecido|\bcura\b|milagr)/i},
+  {id:'segredo',  ic:'shh',   rot:'Pede segredo',             re:/(n[aã]o conta (pra|para)|segredo|n[aã]o fala (pra|para)|entre n[oó]s|n[aã]o querem que voc[eê] saiba)/i},
+  {id:'espalhar', ic:'share', rot:'Pede para espalhar',       re:/(compartilhe|repasse|encaminhe|antes que apaguem|a m[ií]dia n[aã]o mostra|!!!)/i}
+];
+const GRAVES = ['dinheiro','link','dados','parente'];
+function analisar(texto, tipo){
+  const achados = SINAIS.filter(s => s.re.test(texto));
+  const n = achados.length, graves = achados.filter(s => GRAVES.includes(s.id)).length;
+  let nivel = 'verde';
+  if (n >= 3 || (n >= 2 && graves >= 1)) nivel = 'vermelho';
+  else if (n >= 1) nivel = 'amarelo';
+  return {nivel, achados, tipo, texto};
+}
+function oQueFazer(r){
+  const ids = r.achados.map(s => s.id), L = [];
+  const no = t => L.push({ok:false,t}), yes = t => L.push({ok:true,t});
+  if (r.nivel === 'verde'){
+    yes(r.tipo==='noticia' ? 'Mesmo assim, veja se a notícia está em um jornal conhecido' : 'Pode seguir normalmente');
+    yes('Se depois pedirem dinheiro ou dados, verifique de novo');
+    return L;
+  }
+  if (ids.includes('link')) no('Não clique no link');
+  if (ids.includes('dinheiro')) no('Não faça Pix nem pagamento');
+  if (ids.includes('dados')) no('Nunca passe senha, CPF ou códigos');
+  if (ids.includes('premio')) no('Não pague nada para receber prêmio');
+  if (ids.includes('espalhar')) no('Não repasse esta mensagem');
+  if (ids.includes('parente')) yes('Ligue para seu parente no número antigo');
+  if (ids.includes('ameaca')) yes('Ligue para o banco pelo número atrás do cartão');
+  if (r.tipo==='noticia') yes('Procure a notícia em um jornal conhecido');
+  yes('Na dúvida, fale com sua família');
+  return L.slice(0,4);
+}
+const NIVEIS = {
+  vermelho:{cor:'var(--r)', tema:'#e3342f', kicker:'SINAL VERMELHO', t:'É golpe!', tn:'Notícia falsa!', s:'Pare. Não faça nada ainda.', sn:'Não acredite e não repasse.', luz:2, brilho:'#ff5a52'},
+  amarelo: {cor:'var(--y)', tema:'#ffb703', kicker:'SINAL AMARELO', t:'Cuidado!', tn:'Cuidado!', s:'Pode ser golpe. Confira antes de agir.', sn:'Pode ser falsa. Confira antes de acreditar.', luz:1, brilho:'#ffd34d'},
+  verde:   {cor:'var(--g)', tema:'#1f9d55', kicker:'SINAL VERDE', t:'Parece seguro', tn:'Parece confiável', s:'Não encontramos sinais de golpe.', sn:'Não encontramos sinais de notícia falsa.', luz:0, brilho:'#4ade80'}
+};
+
+/* ============ ESTADO ============ */
+const LS = {
+  get(k,d){ try{ const v = localStorage.getItem('sg_'+k); return v===null ? d : JSON.parse(v); }catch(e){ return d; } },
+  set(k,v){ try{ localStorage.setItem('sg_'+k, JSON.stringify(v)); }catch(e){} }
+};
+const S = {
+  fonte: LS.get('fonte', 1), digital: LS.get('digital', true), voz: LS.get('voz', false),
+  aulas: new Set(LS.get('aulas', [])), historico: LS.get('historico', []),
+  rascunho:'', modo:'colar', ultimo:null
+};
+CONTATOS = LS.get('contatos', CONTATOS);
+function salvar(){ LS.set('fonte',S.fonte); LS.set('digital',S.digital); LS.set('voz',S.voz); LS.set('aulas',[...S.aulas]); LS.set('historico',S.historico.slice(0,30)); LS.set('contatos',CONTATOS); }
+function aplicaFonte(){ document.documentElement.className = S.fonte===1 ? '' : 'f'+S.fonte; }
+aplicaFonte();
+
+/* ============ UTILITÁRIOS ============ */
+const $ = s => document.querySelector(s);
+const app = $('#app');
+const ic = (id, extra='') => `<svg class="i" ${extra}><use href="#${id}"/></svg>`;
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const logo = (tam, cor='#fff') => `<svg width="${tam}" height="${tam}" style="color:${cor};flex-shrink:0" aria-hidden="true"><use href="#logo"/></svg>`;
+const logoApp = (tam) => `<span style="width:${tam};height:${tam};border-radius:28%;background:var(--ind);display:inline-flex;align-items:center;justify-content:center;flex-shrink:0" aria-hidden="true">${logo('68%')}</span>`;
+const luzes = () => `<div class="lights" aria-hidden="true"><span style="background:var(--g)"></span><span style="background:var(--y)"></span><span style="background:var(--r)"></span></div>`;
+const iniciais = n => n.split(' ').filter(Boolean).slice(0,2).map(p=>p[0]).join('').toUpperCase();
+function tema(cor){ document.querySelector('meta[name=theme-color]').setAttribute('content', cor); }
+function toast(msg){ document.querySelectorAll('.toast').forEach(t=>t.remove()); const t=document.createElement('div'); t.className='toast'; t.setAttribute('role','status'); t.textContent=msg; app.appendChild(t); setTimeout(()=>t.remove(),2600); }
+function falar(texto){
+  try{ if(!('speechSynthesis' in window)) return toast('Seu celular não tem leitura em voz alta.');
+    speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(texto); u.lang='pt-BR'; u.rate=.92; speechSynthesis.speak(u);
+  }catch(e){ toast('Não foi possível ler em voz alta.'); }
+}
+function sheet(html, montar){
+  const o = document.createElement('div'); o.className='overlay';
+  o.innerHTML = `<div class="sheet" role="dialog" aria-modal="true"><div class="grab"></div>${html}</div>`;
+  o.addEventListener('click', e => { if(e.target===o) o.remove(); });
+  app.appendChild(o); montar && montar(o); return o;
+}
+function confirmar(titulo, texto, acaoRot, acao){
+  const o = sheet(`<div class="h2">${titulo}</div><p class="p mut">${texto}</p>
+    <button class="btn pri" data-ok>${acaoRot}</button><button class="btn ghost" data-x>Cancelar</button>`);
+  o.querySelector('[data-ok]').onclick = () => { o.remove(); acao(); };
+  o.querySelector('[data-x]').onclick = () => o.remove();
+}
+
+/* ============ NAVEGAÇÃO ============ */
+let pilha = [];
+function go(nome, p={}, opt={}){
+  if (opt.raiz){ pilha = [{nome,p}]; }
+  else if (opt.troca){ pilha[pilha.length-1] = {nome,p}; }
+  else { pilha.push({nome,p}); history.pushState({n:pilha.length}, ''); }
+  render();
+}
+function voltar(){ if (pilha.length > 1) history.back(); else go('inicio',{},{raiz:true}); }
+window.addEventListener('popstate', () => {
+  document.querySelectorAll('.overlay,.finger').forEach(o=>o.remove());
+  if (pilha.length > 1){ pilha.pop(); render(); }
+  else history.pushState({n:1}, '');
+});
+let limpar = null;
+function render(){
+  if (limpar){ limpar(); limpar = null; }
+  try{ speechSynthesis.cancel(); }catch(e){}
+  const {nome, p} = pilha[pilha.length-1];
+  const v = TELAS[nome](p);
+  app.innerHTML = `<div class="scr" data-tela="${nome}">${v.html}</div>`;
+  tema(v.tema || '#f6f6fb');
+  bind();
+  v.montar && v.montar();
+}
+function bind(){
+  app.querySelectorAll('[data-go]').forEach(b => b.onclick = () => go(b.dataset.go, b.dataset.p ? JSON.parse(b.dataset.p) : {}));
+  app.querySelectorAll('[data-back]').forEach(b => b.onclick = voltar);
+  app.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => go(b.dataset.tab, {}, {raiz: b.dataset.tab==='inicio'}));
+}
+const voltarBar = (dir='') => `<div class="backbar"><button class="back" data-back aria-label="Voltar">${ic('left')}</button>${dir}</div>`;
+function abas(ativa){
+  const t = (id, icone, rot) => `<button data-tab="${id}" class="${ativa===id?'on':''}" ${ativa===id?'aria-current="page"':''}>${ic(icone)}${rot}</button>`;
+  return `<nav class="tabs">${t('inicio','home','Início')}${t('aprender','play','Aprender')}
+    <button class="fab" data-tab="verificar" aria-label="Verificar mensagem">${ic('search')}</button>
+    ${t('familia','users','Família')}${t('ajuda','help','Ajuda')}</nav>`;
+}
+
+/* ============ TELAS ============ */
+const TELAS = {};
+
+/* Abertura (splash) */
+TELAS.splash = () => ({ tema:'#3f37c9', html:`
+  <div class="scr splash" style="position:absolute;inset:0;display:flex">
+    <svg viewBox="6 6 88 88" width="150" height="150" aria-hidden="true"><line x1="62" y1="62" x2="85" y2="85" stroke="#fff" stroke-width="12" stroke-linecap="round"/><circle cx="42" cy="42" r="29" fill="#1b1b2f" stroke="#fff" stroke-width="8"/><circle id="l0" cx="28" cy="42" r="6.5" fill="#3a3a4f"/><circle id="l1" cx="42" cy="42" r="6.5" fill="#3a3a4f"/><circle id="l2" cx="56" cy="42" r="6.5" fill="#3a3a4f"/></svg>
+    <div style="font-size:2.2rem;font-weight:900">Será Golpe?</div>
+    <div style="opacity:.85;font-weight:700">Antes de clicar, confira.</div>
+  </div>`,
+  montar(){
+    const cores = ['#22b35e','#ffb703','#ef3e36']; let i = 0;
+    const t = setInterval(() => { [0,1,2].forEach(k => { const e=$('#l'+k); if(e){ e.setAttribute('fill', k<=i ? cores[k] : '#3a3a4f'); } }); i++; }, 330);
+    const t2 = setTimeout(() => go('entrar',{},{troca:true}), 1500);
+    limpar = () => { clearInterval(t); clearTimeout(t2); };
+  }
+});
+
+/* T-01 Entrar */
+TELAS.entrar = () => {
+  let pin = '';
+  return { tema:'#3f37c9', html:`
+  <div class="loginTop">
+    <button class="aplus" id="aplus" aria-label="Aumentar o tamanho da letra">A+</button>
+    ${logo('4.2rem')}
+    <div style="font-size:1.8rem;font-weight:900;margin-top:.3rem">Será Golpe?</div>
+    <div style="opacity:.9;font-weight:700">Olá, ${USER.apelido}! Digite sua senha</div>
+    <div class="dots" id="dots" aria-live="polite"><span></span><span></span><span></span><span></span></div>
+  </div>
+  <div class="content nopad" style="justify-content:space-between">
+    <div class="keys" id="keys">
+      ${[1,2,3,4,5,6,7,8,9].map(n=>`<button class="key" data-k="${n}">${n}</button>`).join('')}
+      <button class="key" id="dig" style="background:var(--ind);color:#fff;box-shadow:0 2px 0 var(--ind2)" aria-label="Entrar com a digital">${ic('finger','style="width:1.8rem;height:1.8rem"')}</button>
+      <button class="key" data-k="0">0</button>
+      <button class="key" id="apaga" style="color:var(--mut)" aria-label="Apagar">${ic('del','style="width:1.7rem;height:1.7rem"')}</button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:.2rem">
+      <button class="btn ghost" id="esqueci">Esqueci minha senha</button>
+      <button class="btn ghost" id="ajudaLogin" style="color:var(--mut)">${ic('help')}Preciso de ajuda</button>
+      <p class="demo">Protótipo de demonstração · qualquer senha de 4 números entra</p>
+    </div>
+  </div>`,
+  montar(){
+    const dots = () => $('#dots').querySelectorAll('span').forEach((d,i)=>d.classList.toggle('on', i < pin.length));
+    const entrar = () => { S.rascunho=''; go('inicio',{},{raiz:true}); setTimeout(()=>toast(`Bem-vinda de volta, ${USER.apelido}!`),300); };
+    app.querySelectorAll('[data-k]').forEach(b => b.onclick = () => {
+      if (pin.length >= 4) return; pin += b.dataset.k; dots();
+      if (pin.length === 4) setTimeout(entrar, 250);
+    });
+    $('#apaga').onclick = () => { pin = pin.slice(0,-1); dots(); };
+    $('#dig').onclick = () => digital(entrar);
+    $('#aplus').onclick = () => { S.fonte = S.fonte % 3 + 1; aplicaFonte(); salvar(); toast(['Letra normal','Letra grande','Letra muito grande'][S.fonte-1]); };
+    $('#esqueci').onclick = () => sheet(`<div class="h2">Esqueceu a senha?</div>
+      <p class="p">Vamos enviar um código por SMS para o seu celular <b>${USER.celular}</b>.</p>
+      <p class="p mut">Se preferir, peça ajuda ao seu filho Carlos, que é sua pessoa de confiança.</p>
+      <button class="btn pri" onclick="this.closest('.overlay').remove();toast('Código enviado por SMS (demonstração)')">Enviar código</button>`);
+    $('#ajudaLogin').onclick = () => go('ajuda');
+  }};
+};
+function digital(depois){
+  const f = document.createElement('div'); f.className='finger';
+  f.innerHTML = `<div class="fbox"><div class="fcirc pulse" id="fc">${ic('finger')}</div>
+    <div class="h2" id="ft">Encoste o dedo no leitor</div><p class="mut small">Entrar com a digital</p></div>`;
+  app.appendChild(f);
+  setTimeout(() => { const c=$('#fc'); if(!c) return; c.classList.remove('pulse'); c.classList.add('ok'); c.innerHTML=ic('check'); $('#ft').textContent='Pronto!'; }, 1100);
+  setTimeout(() => { f.remove(); depois(); }, 1700);
+}
+
+/* T-02 Início */
+TELAS.inicio = () => { const a = ALERTAS[0]; return { html:`
+  <div class="content">
+    <div class="row between">
+      <div><div class="h1">Oi, ${USER.apelido}!</div><div class="mut small" style="font-weight:700">Que bom te ver por aqui.</div></div>
+      <button class="row" data-go="perfil" aria-label="Meu perfil">${logoApp('2.2rem')}<span class="av" style="background:var(--pink);width:2.75rem;height:2.75rem;font-size:.95rem">${USER.iniciais}</span></button>
+    </div>
+    <button class="tile" data-go="alerta" data-p='{"id":"${a.id}"}' style="background:var(--y);flex-direction:row;align-items:center;gap:.7rem;box-shadow:0 2px 0 #d99a00">
+      <div class="blob" style="background:#fff;color:#b07800;width:2.6rem;height:2.6rem">${ic('alert')}</div>
+      <div style="line-height:1.3;flex:1"><b>Atenção esta semana!</b><br>${a.t}.</div>${ic('right')}
+    </button>
+    <button class="tile" data-tab="verificar" style="flex-direction:row;align-items:center;gap:.8rem;background:var(--ind);box-shadow:0 4px 0 var(--ind2);padding:1rem .9rem">
+      <div class="blob" style="background:rgba(255,255,255,.18)">${ic('search')}</div>
+      <div><div class="t" style="color:#fff;font-size:1.15rem">Verificar mensagem ou link</div><div class="s" style="color:#d7d5ff">Descubra se é golpe</div></div>
+    </button>
+    <div class="grid2">
+      <button class="tile" data-go="noticia"><div class="blob" style="background:var(--cyan)">${ic('news')}</div><div class="t">Notícia</div><div class="s">É verdade?</div></button>
+      <button class="tile" data-tab="aprender"><div class="blob" style="background:var(--orange)">${ic('play')}</div><div class="t">Aprender</div><div class="s">Vídeos curtos</div></button>
+      <button class="tile" data-tab="familia"><div class="blob" style="background:var(--pink)">${ic('users')}</div><div class="t">Família</div><div class="s">Quem me ajuda</div></button>
+      <button class="tile" data-go="chat"><div class="blob" style="background:var(--wa)">${ic('chat')}</div><div class="t">Atendente</div><div class="s">Pelo WhatsApp</div></button>
+    </div>
+    <button class="li" data-go="alertas"><div class="blob" style="background:var(--indl);color:var(--ind);width:2.6rem;height:2.6rem">${ic('bell')}</div>
+      <div style="flex:1"><div class="t">Alertas de golpes</div><div class="s">${ALERTAS.length} alertas recentes</div></div>${ic('right')}</button>
+    <button class="li" data-go="denunciar"><div class="blob" style="background:var(--rl);color:var(--r);width:2.6rem;height:2.6rem">${ic('flag')}</div>
+      <div style="flex:1"><div class="t">Caí em um golpe</div><div class="s">Veja o que fazer e como denunciar</div></div>${ic('right')}</button>
+  </div>${abas('inicio')}`}; };
+
+/* T-03 Verificar (passo 1 de 2) */
+TELAS.verificar = (p) => { const noticia = p.tipo==='noticia'; const ex = noticia ? EXEMPLOS_NOTICIA : EXEMPLOS; return { html:`
+  <div class="content">
+    ${voltarBar(`<div class="small mut" style="font-weight:800">Passo 1 de 2</div>`)}
+    <div class="prog"><div style="width:50%"></div></div>
+    <div class="h1">${noticia ? 'Qual notícia você recebeu?' : 'Mostre o que você recebeu'}</div>
+    <div class="row" style="gap:.5rem">
+      <button class="tile mode ${S.modo==='colar'?'sel':''}" data-m="colar"><div class="blob" style="background:var(--ind)">${ic('clip')}</div><div class="t" style="font-size:.95rem">Colar</div></button>
+      <button class="tile mode ${S.modo==='falar'?'sel':''}" data-m="falar"><div class="blob" style="background:var(--orange)">${ic('mic')}</div><div class="t" style="font-size:.95rem">Falar</div></button>
+      <button class="tile mode ${S.modo==='foto'?'sel':''}" data-m="foto"><div class="blob" style="background:var(--cyan)">${ic('cam')}</div><div class="t" style="font-size:.95rem">Foto</div></button>
+    </div>
+    <div class="paste"><label for="txt">${noticia?'NOTÍCIA':'MENSAGEM'} RECEBIDA</label>
+      <textarea id="txt" placeholder="${noticia?'Cole ou escreva aqui a notícia…':'Cole aqui a mensagem ou o link…'}">${esc(S.rascunho)}</textarea></div>
+    <div class="small mut" style="font-weight:800">Ou teste com um exemplo:</div>
+    <div class="chips">${ex.map((e,i)=>`<button class="chip" data-ex="${i}">${e.rot}</button>`).join('')}</div>
+    <button class="btn pri" id="ver" style="font-size:1.15rem;margin-top:.2rem">${ic('search')}Será golpe?</button>
+    <div class="row small mut" style="gap:.4rem;font-weight:700;justify-content:center">${ic('lock','style="width:1rem;height:1rem"')}Só olhamos o que você mostrar aqui.</div>
+  </div>${abas(noticia?'':'verificar')}`,
+  montar(){
+    const tx = $('#txt'), bt = $('#ver');
+    const upd = () => { S.rascunho = tx.value; bt.disabled = tx.value.trim().length < 3; };
+    tx.oninput = upd; upd();
+    app.querySelectorAll('[data-ex]').forEach(b => b.onclick = () => { tx.value = ex[+b.dataset.ex].txt; upd(); });
+    app.querySelectorAll('[data-m]').forEach(b => b.onclick = () => {
+      S.modo = b.dataset.m; app.querySelectorAll('.mode').forEach(m=>m.classList.toggle('sel', m===b));
+      if (S.modo==='colar') colar(tx, upd);
+      if (S.modo==='falar') ouvir(tx, upd, ex[0].txt);
+      if (S.modo==='foto') foto(tx, upd, ex[noticia?0:1].txt);
+    });
+    bt.onclick = () => go('analisando', {tipo: noticia?'noticia':'mensagem'});
+  }}; };
+TELAS.noticia = () => TELAS.verificar({tipo:'noticia'});
+async function colar(tx, upd){
+  try{ const t = await navigator.clipboard.readText(); if (t && t.trim()){ tx.value = t; upd(); toast('Mensagem colada!'); return; } }catch(e){}
+  tx.focus(); toast('Toque e segure na caixa e escolha “Colar”.');
+}
+function ouvir(tx, upd, exemplo){
+  const o = sheet(`<div class="h2" style="text-align:center">Pode falar, estou ouvindo…</div>
+    <div class="rec">${ic('mic')}</div><p class="p mut" style="text-align:center" id="ouv">Leia em voz alta a mensagem que você recebeu.</p>
+    <button class="btn out" data-x>Parar</button>`);
+  let feito = false;
+  const fim = (texto) => { if (feito) return; feito = true; o.remove(); if (texto){ tx.value = texto; upd(); toast('Pronto! Transcrevemos sua fala.'); } };
+  const simular = () => setTimeout(() => fim(exemplo), 2600);
+  o.querySelector('[data-x]').onclick = () => fim(tx.value ? '' : exemplo);
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) return simular();
+  try{
+    const r = new SR(); r.lang='pt-BR'; r.interimResults=true; let final='';
+    r.onresult = e => { final = [...e.results].map(x=>x[0].transcript).join(' '); const el=$('#ouv'); if(el) el.textContent='“'+final+'”'; };
+    r.onerror = () => simular();
+    r.onend = () => { if (final.trim()) fim(final); else if(!feito) simular(); };
+    r.start();
+  }catch(e){ simular(); }
+}
+function foto(tx, upd, exemplo){
+  const inp = document.createElement('input'); inp.type='file'; inp.accept='image/*';
+  inp.onchange = () => {
+    const o = sheet(`<div class="h2" style="text-align:center">Lendo o texto da foto…</div>
+      <div class="fcirc pulse" style="margin:0 auto;background:#d6f1fa;color:var(--cyan)">${ic('cam')}</div>
+      <p class="p mut" style="text-align:center">Isso leva só um instante.</p>`);
+    setTimeout(() => { o.remove(); tx.value = exemplo; upd(); toast('Texto da foto encontrado!'); }, 2000);
+  };
+  inp.click();
+}
+
+/* Passo 2 de 2: analisando */
+TELAS.analisando = (p) => { const noticia = p.tipo==='noticia'; return { html:`
+  <div class="content">
+    <div class="backbar"><span></span><div class="small mut" style="font-weight:800">Passo 2 de 2</div></div>
+    <div class="prog"><div style="width:100%"></div></div>
+    <div class="h1" style="text-align:center;margin-top:.6rem">${noticia?'Conferindo a notícia…':'Analisando a mensagem…'}</div>
+    <div class="bigLight" style="margin:.8rem auto"><span id="a0"></span><span id="a1"></span><span id="a2"></span></div>
+    <div class="card checks" id="cks">
+      <div>${'<span class="ck">'+ic('check')+'</span>'}Procurando pedidos de dinheiro</div>
+      <div>${'<span class="ck">'+ic('check')+'</span>'}Conferindo links e endereços</div>
+      <div>${'<span class="ck">'+ic('check')+'</span>'}${noticia?'Procurando sinais de notícia falsa':'Procurando pressa e ameaças'}</div>
+      <div>${'<span class="ck">'+ic('check')+'</span>'}Comparando com golpes conhecidos</div>
+    </div>
+  </div>`,
+  montar(){
+    const cores=['#ef3e36','#ffb703','#22b35e']; let i=0;
+    const t = setInterval(() => { [0,1,2].forEach(k=>{ const e=$('#a'+k); if(e){ const on = k===i%3; e.style.background = on?cores[k]:'#3a3a4f'; e.style.boxShadow = on?`0 0 18px ${cores[k]}`:'none'; } }); i++; }, 280);
+    const cks = app.querySelectorAll('#cks > div');
+    const tt = [...cks].map((c,k) => setTimeout(()=>c.classList.add('ok'), 450 + k*450));
+    const fim = setTimeout(() => {
+      const r = analisar(S.rascunho, p.tipo); S.ultimo = r;
+      S.historico.unshift({texto:S.rascunho.slice(0,120), nivel:r.nivel, tipo:p.tipo, quando:new Date().toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})});
+      salvar(); go('resultado', {}, {troca:true});
+    }, 2500);
+    limpar = () => { clearInterval(t); tt.forEach(clearTimeout); clearTimeout(fim); };
+  }}; };
+
+/* T-04 Resultado */
+TELAS.resultado = () => {
+  const r = S.ultimo; if (!r) return TELAS.inicio();
+  const N = NIVEIS[r.nivel], noticia = r.tipo==='noticia', lista = oQueFazer(r);
+  const titulo = noticia ? N.tn : N.t, sub = noticia ? N.sn : N.s;
+  const luz = [0,1,2].map(k => { const ativo = (2-k)===N.luz; return `<span style="${ativo?`background:${N.brilho};box-shadow:0 0 14px 4px ${N.brilho}`:''}"></span>`; }).join('');
+  const sinais = r.achados.slice(0,3).map(s => `<div class="tile sig"><div class="blob" style="background:var(--rl);color:var(--r)">${ic(s.ic)}</div><div class="s">${s.rot}</div></div>`).join('');
+  const fala = `${N.kicker.toLowerCase()}. ${titulo} ${sub} ${r.achados.length?'Sinais que encontramos: '+r.achados.map(s=>s.rot).join(', ')+'.':''} O que fazer: ${lista.map(l=>l.t).join('. ')}.`;
+  return { tema:N.tema, html:`
+  <div class="resTop ${r.nivel==='amarelo'?'yellow':''}" style="background:${N.cor}">
+    <div class="row between" style="margin-bottom:.4rem">
+      <button class="back" data-tab="inicio" aria-label="Voltar ao início" style="width:2.6rem;height:2.6rem">${ic('x')}</button>
+      <button class="row" id="ouvir" style="background:rgba(255,255,255,.22);border-radius:999px;padding:.45rem .85rem;font-weight:900;min-height:44px">${ic('vol')}Ouvir</button>
+    </div>
+    <div class="row" style="gap:1rem;align-items:center">
+      <div class="light3">${luz}</div>
+      <div><div style="font-size:.85rem;font-weight:900;letter-spacing:1px;opacity:.9">${N.kicker}</div>
+        <div style="font-size:2rem;font-weight:900;line-height:1.05">${titulo}</div>
+        <div style="font-weight:700;opacity:.95;margin-top:.2rem">${sub}</div></div>
+    </div>
+  </div>
+  <div class="content nopad" style="gap:.65rem">
+    ${r.achados.length ? `<div class="h2" style="font-size:1rem">Sinais que encontramos</div><div class="row" style="gap:.45rem;align-items:stretch">${sinais}</div>
+      ${r.achados.length>3?`<div class="small mut" style="font-weight:700">E mais: ${r.achados.slice(3).map(s=>s.rot.toLowerCase()).join(', ')}.</div>`:''}` :
+      `<div class="card row" style="gap:.7rem"><div class="blob" style="background:var(--gl);color:var(--g)">${ic('shield')}</div><div class="p" style="font-weight:700">Não pede dinheiro, dados nem tem link estranho.</div></div>`}
+    <div class="h2" style="font-size:1rem">O que fazer</div>
+    <div class="card todo">${lista.map(l=>`<div><span style="color:${l.ok?'var(--g)':'var(--r)'}">${ic(l.ok?'check':'x','style="stroke-width:3"')}</span>${l.t}</div>`).join('')}</div>
+    ${r.nivel!=='verde' ? `
+      <button class="btn pri" id="avisar">${ic('users')}Avisar minha família</button>
+      ${r.nivel==='vermelho' && !noticia ? `<button class="btn out" data-go="denunciar">${ic('flag')}Já caí no golpe: como denunciar</button>` : ''}
+      <button class="btn ghost" data-tab="inicio">${ic('home')}Voltar ao início</button>` : `
+      <button class="btn green" data-tab="inicio">${ic('home')}Voltar ao início</button>
+      <button class="btn out" id="outra">${ic('search')}Verificar outra</button>`}
+    <p class="demo">O Será Golpe? aponta sinais de risco. Na dúvida, fale com sua família.</p>
+  </div>`,
+  montar(){
+    $('#ouvir').onclick = () => falar(fala);
+    if (S.voz) setTimeout(()=>falar(fala), 400);
+    const av = $('#avisar'); if (av) av.onclick = () => avisarFamilia(r);
+    const ou = $('#outra'); if (ou) ou.onclick = () => { S.rascunho=''; go(r.tipo==='noticia'?'noticia':'verificar',{},{troca:true}); };
+  }};
+};
+function avisarFamilia(r){
+  const sel = new Set(CONTATOS.map((c,i)=>c.aviso?i:-1).filter(i=>i>=0));
+  const msg = `${USER.apelido} recebeu ${r.tipo==='noticia'?'uma notícia':'uma mensagem'} que parece golpe (${NIVEIS[r.nivel].kicker.toLowerCase()}). Ligue para ela quando puder.`;
+  const o = sheet(`<div class="h2">Avisar minha família</div>
+    <p class="p mut">Quem deve receber o aviso?</p>
+    <div style="display:flex;flex-direction:column;gap:.5rem">${CONTATOS.map((c,i)=>`
+      <button class="li" data-c="${i}" aria-pressed="${sel.has(i)}"><span class="av" style="background:${c.cor}">${iniciais(c.nome)}</span>
+      <div style="flex:1"><div class="t">${esc(c.nome)}</div><div class="s">${esc(c.rel)}</div></div>
+      <span class="ck" style="${sel.has(i)?'background:var(--g);color:#fff':''}">${ic('check')}</span></button>`).join('')}</div>
+    <div class="card small" style="background:var(--indl)"><b>Mensagem que será enviada:</b><br>“${esc(msg)}”</div>
+    <button class="btn pri" id="env">${ic('send')}Enviar aviso</button>`, (ov) => {
+      ov.querySelectorAll('[data-c]').forEach(b => b.onclick = () => {
+        const i = +b.dataset.c; sel.has(i) ? sel.delete(i) : sel.add(i);
+        b.setAttribute('aria-pressed', sel.has(i)); const ck = b.querySelector('.ck');
+        ck.style.background = sel.has(i)?'var(--g)':''; ck.style.color = sel.has(i)?'#fff':'';
+        ov.querySelector('#env').disabled = sel.size===0;
+      });
+      ov.querySelector('#env').onclick = () => {
+        const nomes = [...sel].map(i=>CONTATOS[i].nome.split(' ')[0]);
+        ov.querySelector('.sheet').innerHTML = `<div class="grab"></div>
+          <div class="fcirc ok" style="margin:.6rem auto">${ic('check')}</div>
+          <div class="h1" style="text-align:center">Aviso enviado!</div>
+          <p class="p" style="text-align:center">${nomes.join(' e ')} ${nomes.length>1?'foram avisados':'foi avisado(a)'}. Eles vão entrar em contato com você.</p>
+          <button class="btn pri" id="ok">Entendi</button>`;
+        ov.querySelector('#ok').onclick = () => ov.remove();
+      };
+  });
+}
+
+/* Alertas */
+TELAS.alertas = () => ({ html:`
+  <div class="content">${voltarBar()}
+    <div class="h1">Alertas de golpes</div><p class="p mut">Golpes que estão acontecendo agora. Fique de olho!</p>
+    ${ALERTAS.map((a,i)=>`<button class="li" data-go="alerta" data-p='{"id":"${a.id}"}'>
+      <div class="blob" style="background:${i===0?'var(--y)':'var(--yl)'};color:#8a5a00;width:2.8rem;height:2.8rem">${ic('alert')}</div>
+      <div style="flex:1"><span class="pill" style="${i===0?'background:var(--y);color:var(--ink)':''}">${a.quando}</span><div class="t" style="margin-top:.2rem">${a.t}</div></div>${ic('right')}</button>`).join('')}
+  </div>${abas('')}`});
+TELAS.alerta = (p) => { const a = ALERTAS.find(x=>x.id===p.id) || ALERTAS[0]; const au = AULAS.find(x=>x.id===a.aula); return { html:`
+  <div class="content">${voltarBar()}
+    <span class="pill" style="background:var(--y);color:var(--ink);align-self:flex-start">${a.quando}</span>
+    <div class="h1">${a.t}</div>
+    <div class="card p">${a.txt}</div>
+    <div class="row" style="gap:.5rem"><button class="btn out" id="ouvA" style="flex:1">${ic('vol')}Ouvir</button></div>
+    ${au?`<div class="h2">Aprenda mais</div><button class="li" data-go="aula" data-p='{"id":"${au.id}"}'><div class="blob" style="background:${au.cor}">${ic('play')}</div><div style="flex:1"><div class="t">${au.t}</div><div class="s">Vídeo de ${au.d}</div></div>${ic('right')}</button>`:''}
+    <button class="btn pri" data-tab="verificar">${ic('search')}Recebi algo assim: verificar</button>
+  </div>${abas('')}`, montar(){ $('#ouvA').onclick = () => falar(a.t+'. '+a.txt); } }; };
+
+/* Aprender */
+TELAS.aprender = () => { const n = AULAS.filter(a=>S.aulas.has(a.id)).length; return { html:`
+  <div class="content">
+    <div class="h1">Aprender</div>
+    <p class="p mut">Vídeos curtos para se proteger dos golpes.</p>
+    <div class="card"><div class="row between"><b>Seu progresso</b><span class="pill">${n} de ${AULAS.length} vídeos</span></div>
+      <div class="prog" style="margin-top:.6rem"><div style="width:${n/AULAS.length*100}%;background:var(--g)"></div></div></div>
+    ${AULAS.map(a=>`<button class="li" data-go="aula" data-p='{"id":"${a.id}"}'>
+      <div class="blob" style="background:${a.cor}">${ic(a.ic)}</div>
+      <div style="flex:1"><div class="t">${a.t}</div><div class="s">${ic('clock','style="width:.9rem;height:.9rem;vertical-align:-2px"')} ${a.d}</div></div>
+      ${S.aulas.has(a.id)?`<span class="ck" style="background:var(--g);color:#fff" aria-label="Visto">${ic('check')}</span>`:ic('playf','style="color:var(--ind)"')}</button>`).join('')}
+  </div>${abas('aprender')}`}; };
+TELAS.aula = (p) => { const a = AULAS.find(x=>x.id===p.id) || AULAS[0]; return { html:`
+  <div class="content">${voltarBar(`<span class="pill">${a.d}</span>`)}
+    <div class="video" id="vid" style="background:linear-gradient(135deg, ${a.cor}, #1b1b2f)">
+      <button class="play" id="assistir" aria-label="Assistir">${ic('playf','style="width:2rem;height:2rem;margin-left:4px"')}</button>
+      <div class="cap" id="cap" style="display:none"></div><div class="bar" id="bar"></div>
+    </div>
+    <div class="h1">${a.t}</div>
+    <div class="h2">Resumo do vídeo</div>
+    <div class="card" style="display:flex;flex-direction:column;gap:.7rem">${a.pts.map((t,i)=>`<div class="step"><span class="num">${i+1}</span><p class="p" style="font-weight:700">${t}</p></div>`).join('')}</div>
+    <button class="btn ${S.aulas.has(a.id)?'out':'pri'}" id="feito">${ic('check')}${S.aulas.has(a.id)?'Vídeo já assistido':'Marcar como assistido'}</button>
+  </div>${abas('aprender')}`,
+  montar(){
+    let ts = [];
+    $("#assistir").onclick = () => {
+      $("#assistir").style.display='none'; const cap=$('#cap'), bar=$('#bar'); cap.style.display='block';
+      const dur = 3200 * a.pts.length; bar.style.transition = `width ${dur}ms linear`; requestAnimationFrame(()=>bar.style.width='100%');
+      a.pts.forEach((t,i)=> ts.push(setTimeout(()=>{ cap.textContent = t; falar(t); }, i*3200)));
+      ts.push(setTimeout(()=>{ cap.innerHTML='Fim do vídeo! 👏'; S.aulas.add(a.id); salvar(); const f=$('#feito'); if(f){ f.className='btn out'; f.innerHTML=ic('check')+'Vídeo já assistido'; } }, dur));
+    };
+    $('#feito').onclick = () => { S.aulas.add(a.id); salvar(); toast('Muito bem! Vídeo marcado como assistido.'); render(); };
+    limpar = () => ts.forEach(clearTimeout);
+  }}; };
+
+/* Família */
+TELAS.familia = () => ({ html:`
+  <div class="content">
+    <div class="h1">Minha família</div>
+    <p class="p mut">Pessoas de confiança que recebem um aviso quando o app encontra um golpe.</p>
+    ${CONTATOS.map((c,i)=>`<div class="card" style="display:flex;flex-direction:column;gap:.7rem">
+      <div class="row"><span class="av" style="background:${c.cor}">${iniciais(c.nome)}</span>
+        <div style="flex:1"><div class="t" style="font-weight:900">${esc(c.nome)}</div><div class="s mut small" style="font-weight:700">${esc(c.rel)} ${c.principal?'<span class="pill">Principal</span>':''}</div></div></div>
+      <div class="row" style="gap:.5rem">
+        <button class="btn out" style="min-height:2.9rem;font-size:.95rem" data-lig="${i}">${ic('phone')}Ligar</button>
+        <button class="btn out" style="min-height:2.9rem;font-size:.95rem" data-msg="${i}">${ic('chat')}Mensagem</button></div>
+      <button class="row between" data-av="${i}" style="min-height:44px" aria-pressed="${c.aviso}"><span class="small" style="font-weight:800">Recebe avisos de golpe</span><span class="tog ${c.aviso?'on':''}"></span></button>
+    </div>`).join('')}
+    <button class="btn pri" id="add">${ic('plus')}Adicionar pessoa de confiança</button>
+  </div>${abas('familia')}`,
+  montar(){
+    app.querySelectorAll('[data-lig]').forEach(b => b.onclick = () => toast(`Ligando para ${CONTATOS[+b.dataset.lig].nome.split(' ')[0]}… (demonstração)`));
+    app.querySelectorAll('[data-msg]').forEach(b => b.onclick = () => toast(`Abrindo conversa com ${CONTATOS[+b.dataset.msg].nome.split(' ')[0]}… (demonstração)`));
+    app.querySelectorAll('[data-av]').forEach(b => b.onclick = () => { const c = CONTATOS[+b.dataset.av]; c.aviso = !c.aviso; salvar(); render(); });
+    $('#add').onclick = () => { const o = sheet(`<div class="h2">Nova pessoa de confiança</div>
+      <label class="field"><span>Nome</span><input id="nn" autocomplete="off" placeholder="Ex.: Júlia"></label>
+      <label class="field"><span>Quem é?</span><input id="nr" autocomplete="off" placeholder="Ex.: Neta"></label>
+      <label class="field"><span>Celular</span><input id="nt" inputmode="tel" placeholder="(85) 9 0000-0000"></label>
+      <button class="btn pri" id="sv">${ic('check')}Salvar</button>`);
+      o.querySelector('#sv').onclick = () => { const nome = o.querySelector('#nn').value.trim(); if(!nome) return toast('Escreva o nome da pessoa.');
+        CONTATOS.push({nome, rel:o.querySelector('#nr').value.trim()||'Pessoa de confiança', aviso:true, cor:CORES_AV[CONTATOS.length%CORES_AV.length]});
+        salvar(); o.remove(); render(); toast(`${nome} agora recebe seus avisos.`); };
+    };
+  }});
+
+/* Ajuda */
+const FAQ = [
+  ['O Será Golpe? lê minhas conversas?','Não. O app só olha o que você mesma colar, falar ou fotografar na tela de verificar.'],
+  ['O resultado está sempre certo?','O app mostra sinais de risco, mas não é infalível. Na dúvida, fale com sua família ou com um atendente.'],
+  ['Caí em um golpe. E agora?','Fique calma: você não tem culpa. Veja o passo a passo na tela “Caí em um golpe”.'],
+  ['Como aumento o tamanho da letra?','Toque na sua foto, no alto da tela de Início, e escolha o tamanho em “Tamanho da letra”.'],
+  ['Quanto custa?','A versão básica é gratuita. Recursos extras ficam na versão Premium.']
+];
+TELAS.ajuda = () => ({ html:`
+  <div class="content">
+    <div class="h1">Ajuda</div>
+    <button class="tile" data-go="chat" style="flex-direction:row;align-items:center;gap:.8rem;background:var(--wa);box-shadow:0 4px 0 #13703b">
+      <div class="blob" style="background:rgba(255,255,255,.2)">${ic('chat')}</div>
+      <div><div class="t" style="color:#fff">Falar com uma pessoa</div><div class="s" style="color:#d5f5e1">Atendimento pelo WhatsApp</div></div></button>
+    <button class="li" data-go="denunciar"><div class="blob" style="background:var(--rl);color:var(--r);width:2.6rem;height:2.6rem">${ic('flag')}</div>
+      <div style="flex:1"><div class="t">Caí em um golpe</div><div class="s">O que fazer e como denunciar</div></div>${ic('right')}</button>
+    <div class="h2">Perguntas frequentes</div>
+    ${FAQ.map(([q,a])=>`<details class="card acc"><summary>${q}<span class="chev">${ic('right')}</span></summary><p class="p mut">${a}</p></details>`).join('')}
+  </div>${abas('ajuda')}`});
+
+/* Atendente (chat simulado) */
+const RESP = {
+  'Recebi uma mensagem estranha':'Não clique em nenhum link e não faça Pix. Use o botão “Verificar” do app ou me mande a mensagem aqui que eu te ajudo.',
+  'Acho que caí em um golpe':'Calma, a senhora não tem culpa. Ligue agora para o seu banco e guarde os prints das mensagens. No app, a tela “Caí em um golpe” mostra o passo a passo.',
+  'Como aviso minha família?':'Depois de verificar uma mensagem, toque em “Avisar minha família”. Seu filho Carlos e sua filha Ana recebem o aviso.'
+};
+TELAS.chat = () => ({ tema:'#1f9d55', html:`
+  <div class="chatTop"><button class="back" data-back aria-label="Voltar" style="background:rgba(255,255,255,.2);color:#fff;box-shadow:none">${ic('left')}</button>
+    <span class="av" style="background:#fff;color:var(--wa)">BI</span>
+    <div style="flex:1"><div style="font-weight:900">Bia · Será Golpe?</div><div class="small" style="opacity:.9">Atendente · online</div></div></div>
+  <div class="msgs" id="msgs">
+    <div class="bub them">Olá, ${USER.apelido}! Eu sou a Bia, atendente do Será Golpe?. Como posso te ajudar? 😊</div>
+  </div>
+  <div style="background:#efeae2;padding:0 12px 8px" class="chips" id="qr">${Object.keys(RESP).map(k=>`<button class="chip" data-q="${k}">${k}</button>`).join('')}</div>
+  <div class="chatIn"><input id="ci" placeholder="Escreva sua mensagem" aria-label="Mensagem"><button id="cs" aria-label="Enviar">${ic('send')}</button></div>`,
+  montar(){
+    const box = $('#msgs');
+    const add = (t, me) => { const d=document.createElement('div'); d.className='bub '+(me?'me':'them'); d.textContent=t; box.appendChild(d); box.scrollTop=box.scrollHeight; };
+    const responde = t => { const d=document.createElement('div'); d.className='bub them'; d.textContent='digitando…'; d.style.opacity=.6; box.appendChild(d); box.scrollTop=box.scrollHeight;
+      setTimeout(()=>{ d.remove(); add(t,false); }, 1100); };
+    app.querySelectorAll('[data-q]').forEach(b => b.onclick = () => { add(b.dataset.q,true); responde(RESP[b.dataset.q]); });
+    const enviar = () => { const v=$('#ci').value.trim(); if(!v) return; $('#ci').value=''; add(v,true);
+      const r = analisar(v,'mensagem');
+      responde(r.nivel==='verde' ? 'Obrigada pela mensagem! Uma atendente vai continuar a conversa com a senhora em instantes.' :
+        `Cuidado! Essa mensagem tem sinais de golpe: ${r.achados.map(s=>s.rot.toLowerCase()).join(', ')}. Não faça nada antes de falar com sua família.`); };
+    $('#cs').onclick = enviar; $('#ci').onkeydown = e => { if(e.key==='Enter') enviar(); };
+  }});
+
+/* Como denunciar (parte jurídica) */
+TELAS.denunciar = () => ({ html:`
+  <div class="content">${voltarBar()}
+    <div class="h1">Caiu em um golpe?</div>
+    <div class="card row" style="gap:.7rem;background:var(--gl)"><div class="blob" style="background:var(--g)">${ic('shield')}</div><p class="p" style="font-weight:800">Fique calma. Você não tem culpa: quem errou foi o golpista.</p></div>
+    <div class="step card"><span class="num">1</span><div><div class="h2">Guarde as provas</div><p class="p mut">Tire print das mensagens, do número do golpista e do comprovante. Não apague nada.</p></div></div>
+    <div class="step card"><span class="num">2</span><div style="flex:1"><div class="h2">Avise seu banco agora</div><p class="p mut">Se fez um Pix, peça a devolução pelo <b>MED</b> (Mecanismo Especial de Devolução). O prazo é de até 80 dias, mas quanto antes, maior a chance de recuperar o dinheiro.</p>
+      <button class="btn out" style="margin-top:.6rem" id="banco">${ic('phone')}Ligar para o meu banco</button></div></div>
+    <div class="step card"><span class="num">3</span><div style="flex:1"><div class="h2">Faça o boletim de ocorrência</div><p class="p mut">No Ceará, pela internet, a qualquer hora, na <b>Delegacia Eletrônica</b> da Polícia Civil. Ou vá à delegacia mais próxima.</p>
+      <a class="btn out" style="margin-top:.6rem;text-decoration:none" href="https://www.delegaciaeletronica.ce.gov.br" target="_blank" rel="noopener">${ic('flag')}Abrir a Delegacia Eletrônica</a></div></div>
+    <div class="step card"><span class="num">4</span><div style="flex:1"><div class="h2">Peça ajuda e denuncie</div><p class="p mut">O <b>Disque 100</b> (Direitos Humanos) recebe denúncias de violência contra a pessoa idosa. A ligação é gratuita.</p>
+      <button class="btn out" style="margin-top:.6rem" id="d100">${ic('phone')}Ligar para o Disque 100</button></div></div>
+    <div class="step card"><span class="num">5</span><div style="flex:1"><div class="h2">Conte para a família</div><p class="p mut">Você não precisa resolver isso sozinha.</p>
+      <button class="btn pri" style="margin-top:.6rem" data-tab="familia">${ic('users')}Falar com minha família</button></div></div>
+    <div class="law"><div class="row" style="gap:.5rem;margin-bottom:.4rem"><span style="color:var(--ind)">${ic('scale')}</span><b>Seus direitos</b></div>
+      Golpe é crime de <b>estelionato</b> (art. 171 do Código Penal). Quando é feito por mensagem, rede social ou ligação, é <b>fraude eletrônica</b>, com pena de 4 a 8 anos de prisão (§ 2º-A). Se a vítima é idosa, a pena aumenta de 1/3 até o dobro (§ 4º).
+      <div class="small mut" style="margin-top:.5rem">Informação educativa. Para orientação no seu caso, procure a Defensoria Pública ou um advogado.</div></div>
+  </div>${abas('')}`,
+  montar(){
+    $('#banco').onclick = () => toast('Use o número que está atrás do seu cartão. (demonstração)');
+    $('#d100').onclick = () => confirmar('Ligar para o Disque 100?','A ligação é gratuita e funciona todos os dias.','Ligar agora', () => { location.href='tel:100'; });
+  }});
+
+/* Perfil */
+TELAS.perfil = () => { const g = S.historico.filter(h=>h.nivel==='vermelho').length; return { html:`
+  <div class="content">${voltarBar()}
+    <div style="display:flex;flex-direction:column;align-items:center;gap:.3rem">
+      <span class="av" style="background:var(--pink);width:5rem;height:5rem;font-size:1.7rem">${USER.iniciais}</span>
+      <div class="h1" style="text-align:center">${USER.nome}</div>
+      <div class="mut" style="font-weight:700">${USER.idade} anos · ${USER.cidade}</div>
+      <span class="pill">Plano ${USER.plano}</span>
+    </div>
+    <div class="grid2">
+      <div class="card" style="text-align:center"><div class="h1" style="color:var(--ind)">${S.historico.length}</div><div class="small mut" style="font-weight:800">verificações</div></div>
+      <div class="card" style="text-align:center"><div class="h1" style="color:var(--r)">${g}</div><div class="small mut" style="font-weight:800">golpes evitados</div></div>
+    </div>
+    <div class="card" style="display:flex;flex-direction:column;gap:.55rem">
+      <div class="h2">Meus dados</div>
+      <div class="row between small"><span class="mut" style="font-weight:700">Nascimento</span><b>${USER.nascimento}</b></div>
+      <div class="row between small"><span class="mut" style="font-weight:700">Celular</span><b>${USER.celular}</b></div>
+      <div class="row between small"><span class="mut" style="font-weight:700">Pessoa principal</span><b>${(CONTATOS.find(c=>c.principal)||CONTATOS[0]||{nome:'—'}).nome}</b></div>
+    </div>
+    <div class="card" style="display:flex;flex-direction:column;gap:.6rem">
+      <div class="row" style="gap:.5rem"><span style="color:var(--ind)">${ic('text')}</span><div class="h2">Tamanho da letra</div></div>
+      <div class="seg">${['Normal','Grande','Muito grande'].map((t,i)=>`<button data-f="${i+1}" class="${S.fonte===i+1?'on':''}" style="font-size:${.85+i*.12}rem">${t}</button>`).join('')}</div>
+      <button class="row between" id="tDig" style="min-height:44px"><span class="row" style="gap:.5rem;font-weight:800">${ic('finger')}Entrar com a digital</span><span class="tog ${S.digital?'on':''}"></span></button>
+      <button class="row between" id="tVoz" style="min-height:44px"><span class="row" style="gap:.5rem;font-weight:800">${ic('vol')}Ler resultados em voz alta</span><span class="tog ${S.voz?'on':''}"></span></button>
+    </div>
+    <div class="h2">Minhas verificações</div>
+    ${S.historico.length ? S.historico.slice(0,5).map(h=>`<div class="li"><span class="ck" style="width:1.4rem;height:1.4rem;background:${NIVEIS[h.nivel].cor}"></span>
+      <div style="flex:1;min-width:0"><div class="t" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:.95rem">${esc(h.texto)}</div><div class="s">${NIVEIS[h.nivel].kicker.replace('SINAL ','Sinal ').toLowerCase().replace('sinal','Sinal')} · ${h.quando}</div></div></div>`).join('')
+      : `<p class="p mut">Você ainda não verificou nenhuma mensagem.</p>`}
+    <div class="card" style="background:linear-gradient(135deg,#3f37c9,#7b2fbf);color:#fff;display:flex;flex-direction:column;gap:.4rem">
+      <div class="row" style="gap:.5rem">${ic('star')}<b>Será Golpe? Premium</b></div>
+      <p class="small" style="opacity:.95;font-weight:700">Avisos automáticos para até 5 familiares e atendimento prioritário.</p>
+      <button class="btn" style="background:#fff;color:var(--ind);min-height:2.75rem" id="prem">Conhecer</button>
+    </div>
+    <button class="btn ghost" id="sair" style="color:var(--r)">${ic('out')}Sair do aplicativo</button>
+    <p class="demo">Protótipo acadêmico · Design Thinking · AV2 · todos os dados são fictícios</p>
+  </div>`,
+  montar(){
+    app.querySelectorAll('[data-f]').forEach(b => b.onclick = () => { S.fonte = +b.dataset.f; aplicaFonte(); salvar(); render(); });
+    $('#tDig').onclick = () => { S.digital=!S.digital; salvar(); render(); };
+    $('#tVoz').onclick = () => { S.voz=!S.voz; salvar(); render(); };
+    $('#prem').onclick = () => toast('Em breve! (demonstração)');
+    $('#sair').onclick = () => confirmar('Sair do aplicativo?','Para entrar de novo, use sua senha ou a digital.','Sair', () => go('entrar',{},{raiz:true}));
+  }}; };
+
+/* ============ INÍCIO ============ */
+history.replaceState({n:1}, '');
+go('splash', {}, {raiz:true});
+if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script>
+</body>
+</html>

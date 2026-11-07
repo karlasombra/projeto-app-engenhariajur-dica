@@ -8,11 +8,11 @@
 Aplicativo para **ajudar pessoas idosas a reconhecer o estelionato digital** (nome: **Será Golpe?**). Projeto em grupo da AV2 de Design Thinking (Prof. Cláudio Meireles Jr).
 **Objetivo final:** entregar um app que atenda aos critérios da disciplina e garanta a aprovação.
 
-Tudo que diz respeito ao projeto vive nesta pasta (`C:\projeto-app-engenhariajurídica`). Ela é a **única fonte da verdade**: se uma informação não está aqui, ela não foi decidida.
+Tudo que diz respeito ao projeto vive nesta pasta (hoje em `D:\projetounifor\projeto-app-engenhariajur-dica`, versionada no GitHub: `karlasombra/projeto-app-engenhariajur-dica`). Ela é a **única fonte da verdade**: se uma informação não está aqui, ela não foi decidida.
 
 ## Fase atual
 
-**Fase 1 — Contexto e fundação** (sem código ainda).
+**Fase 4 — Validação e entrega.** O app (MVP simulado, instalável no celular) está em `app/`. Apresentação: 08/11/2026 à noite.
 Ver [STATUS.md](STATUS.md) para o andamento e os próximos passos.
 
 ## Mapa da pasta
@@ -30,8 +30,10 @@ Ver [STATUS.md](STATUS.md) para o andamento e os próximos passos.
 | [referencias/](referencias/) | Material da disciplina: enunciado, slides, rubricas, exemplos. |
 | `base do app/` | Artefatos do grupo (árvore de problemas, perfil do cliente, quadro comparativo, Canvas). **Base de todo o app.** Não editar os originais. |
 | [storyboard/](storyboard/) | Storyboard da AV2. `propostas/` tem as 4 propostas de design (PNG + HTML editável); `v1-olho-vivo/` é a versão descartada. |
-| `app/` | Código do aplicativo (criado a partir da Fase 3). |
-| `.claude/skills/` | Skills específicas deste projeto. |
+| [app/](app/) | O app: um `index.html` (PWA). Ver `app/LEIA-ME.md` para abrir, publicar e o roteiro da apresentação. |
+| [logo/](logo/) | Logo oficial (Lupa semáforo) em todas as versões: SVG, PNG, ícones do app e telas. Ver `logo/LEIA-ME.md`. |
+| `.github/workflows/` | Publicação automática do `app/` no GitHub Pages. |
+| `.claude/skills/` | (Opcional, ainda não criada) skills específicas deste projeto. |
 
 ## Regras de trabalho (para qualquer chat)
 
@@ -48,7 +50,7 @@ Ver [STATUS.md](STATUS.md) para o andamento e os próximos passos.
 - Idioma da documentação e da interface: **português (Brasil)**.
 - IDs: requisitos funcionais `RF-01`, não funcionais `RNF-01`, histórias `HU-01`, telas `T-01`, fluxos `F-01`, decisões `0001`.
 - Marcador de lacuna: `A DEFINIR` (buscável em toda a pasta).
-- Convenções de código: definidas em `docs/05-arquitetura-e-stack.md` quando a stack for escolhida.
+- Convenções de código: ver `docs/05-arquitetura-e-stack.md`.
 
 ## Fases do projeto
 
