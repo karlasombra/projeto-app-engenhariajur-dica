@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Storyboard — Olho Vivo</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1600px; height: 900px; }
+  body {
+    font-family: "Segoe UI", Roboto, Arial, sans-serif;
+    background: #eef1ef;
+    color: #1c2b26;
+    display: flex; flex-direction: column; align-items: center;
+    padding: 26px 40px 0;
+  }
+  h1 { font-size: 27px; font-weight: 700; color: #1f4d3f; letter-spacing: .2px; }
+  .sub { font-size: 16px; color: #50625b; margin-top: 4px; }
+
+  .row { display: flex; gap: 46px; margin-top: 22px; }
+  .col { display: flex; flex-direction: column; align-items: center; width: 318px; }
+
+  .tag {
+    background: #dfe5e2; border-radius: 999px; padding: 5px 18px;
+    font-size: 16px; font-weight: 600; color: #2b3a35; margin-bottom: 12px;
+  }
+  .tag b { color: #1f6b52; margin-right: 6px; }
+
+  .phone {
+    width: 300px; height: 620px; border-radius: 42px;
+    background: #1b1d1f; padding: 10px;
+    box-shadow: 0 14px 30px rgba(0,0,0,.18);
+  }
+  .screen {
+    width: 100%; height: 100%; border-radius: 33px; background: #fbfcfb;
+    overflow: hidden; position: relative; display: flex; flex-direction: column;
+  }
+  .status { display: flex; justify-content: space-between; padding: 12px 22px 4px; font-size: 12px; font-weight: 600; }
+  .status .icons { letter-spacing: 2px; font-size: 10px; }
+  .body { padding: 6px 16px 0; flex: 1; display: flex; flex-direction: column; }
+
+  .caption { margin-top: 14px; font-size: 14.5px; line-height: 1.35; text-align: center; color: #34453f; }
+  .caption b { color: #1f4d3f; }
+
+  /* componentes */
+  .btn {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    height: 44px; border-radius: 10px; font-size: 15px; font-weight: 600;
+  }
+  .primary { background: #1f6b52; color: #fff; }
+  .outline { border: 1.6px solid #1f6b52; color: #1f6b52; background: #fff; }
+  .danger { background: #c62828; color: #fff; }
+  .link { color: #1f6b52; text-decoration: underline; font-size: 12.5px; }
+  .label { font-size: 13px; font-weight: 600; margin: 8px 0 4px; }
+  .input {
+    height: 40px; border: 1.3px solid #c9d3cf; border-radius: 9px; background: #fff;
+    display: flex; align-items: center; justify-content: space-between; padding: 0 12px;
+    font-size: 13px; color: #8a9893;
+  }
+  .card { background: #fff; border: 1px solid #e1e7e4; border-radius: 12px; padding: 10px 12px; }
+  svg.i { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+
+  .nav {
+    display: flex; justify-content: space-around; border-top: 1px solid #e3e8e6;
+    padding: 8px 6px 16px; background: #fff; font-size: 10.5px; color: #6c7b76;
+  }
+  .nav div { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+  .nav .on { color: #1f6b52; font-weight: 700; }
+  .nav svg.i { width: 20px; height: 20px; }
+</style>
+</head>
+<body>
+
+<!-- ícones reutilizáveis -->
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <symbol id="shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></symbol>
+    <symbol id="eye" viewBox="0 0 24 24"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="finger" viewBox="0 0 24 24"><path d="M12 11v4M8 9a4 4 0 018 0v5M5 12a7 7 0 0114 0v3M9 20c1-2 1-4 1-6M15 20c.5-1.5.8-3 .9-4.5"/></symbol>
+    <symbol id="mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0014 0M12 18v3"/></symbol>
+    <symbol id="link" viewBox="0 0 24 24"><path d="M10 14a4 4 0 006 0l3-3a4 4 0 00-6-6l-1 1"/><path d="M14 10a4 4 0 00-6 0l-3 3a4 4 0 006 6l1-1"/></symbol>
+    <symbol id="news" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 8h10M7 12h10M7 16h6"/></symbol>
+    <symbol id="play" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M10 9l5 3-5 3z"/></symbol>
+    <symbol id="users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0112 0"/><circle cx="17" cy="9" r="2.5"/><path d="M16 14a5 5 0 016 5"/></symbol>
+    <symbol id="help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 015 .5c0 2-2.5 2-2.5 4M12 17h.01"/></symbol>
+    <symbol id="home" viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9h-6v-6H9v6H3z"/></symbol>
+    <symbol id="search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></symbol>
+    <symbol id="alert" viewBox="0 0 24 24"><path d="M12 3l10 18H2z"/><path d="M12 10v4M12 17.5h.01"/></symbol>
+    <symbol id="bell" viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0112 0v5l2 2H4z"/><path d="M10 21h4"/></symbol>
+    <symbol id="clip" viewBox="0 0 24 24"><rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 4V3h6v1M9 10h6M9 14h6"/></symbol>
+    <symbol id="chat" viewBox="0 0 24 24"><path d="M4 20l1.5-4A8 8 0 1112 20a8 8 0 01-4-1z"/></symbol>
+    <symbol id="flag" viewBox="0 0 24 24"><path d="M5 21V4h11l-2 4 2 4H5"/></symbol>
+    <symbol id="x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+    <symbol id="back" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></symbol>
+  </defs>
+</svg>
+
+<h1>Storyboard — Olho Vivo: app para ajudar idosos a reconhecer o estelionato digital</h1>
+<p class="sub">Jornada da Dona Maria, 68 anos, ao receber uma mensagem suspeita no WhatsApp</p>
+
+<div class="row">
+
+  <!-- 01 ENTRAR -->
+  <div class="col">
+    <div class="tag"><b>01</b>Entrar</div>
+    <div class="phone"><div class="screen">
+      <div class="status"><span>9:41</span><span class="icons">▂▄▆ ▮</span></div>
+      <div class="body">
+        <div style="display:flex;justify-content:flex-end">
+          <div class="card" style="padding:5px 10px;font-size:12px;font-weight:700;color:#1f6b52">AA&nbsp; Aumentar letras</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;margin-top:16px">
+          <div style="width:62px;height:62px;border-radius:16px;background:#1f6b52;color:#fff;display:flex;align-items:center;justify-content:center">
+            <svg class="i" style="width:38px;height:38px"><use href="#eye"/></svg>
+          </div>
+          <div style="font-size:15px;font-weight:700;color:#1f6b52;margin-top:8px">Olho Vivo</div>
+          <div style="font-size:24px;font-weight:800;margin-top:10px">Bem-vinda!</div>
+          <div style="font-size:13.5px;color:#50625b;text-align:center;margin-top:2px">Use a internet com segurança e tranquilidade.</div>
+        </div>
+        <div style="margin-top:14px">
+          <div class="label">Celular</div>
+          <div class="input">(00) 00000-0000</div>
+          <div class="label">Senha</div>
+          <div class="input">Digite sua senha <span style="color:#1f6b52;font-weight:600;display:flex;gap:4px;align-items:center"><svg class="i" style="width:15px;height:15px"><use href="#eye"/></svg>Mostrar</span></div>
+          <div style="text-align:center;margin:10px 0"><span class="link">Esqueci minha senha</span></div>
+          <div class="btn primary">Entrar</div>
+          <div class="btn outline" style="margin-top:9px"><svg class="i"><use href="#finger"/></svg>Entrar com digital</div>
+          <div style="display:flex;justify-content:center;gap:10px;margin-top:14px;font-size:12.5px;color:#9aa6a2">
+            <span class="link">Criar minha conta</span>|<span class="link">Preciso de ajuda</span>
+          </div>
+        </div>
+      </div>
+    </div></div>
+    <p class="caption">Maria entra com a <b>digital</b> e pode <b>aumentar as letras</b>. Nada de termos técnicos.</p>
+  </div>
+
+  <!-- 02 INÍCIO -->
+  <div class="col">
+    <div class="tag"><b>02</b>Início</div>
+    <div class="phone"><div class="screen">
+      <div class="status"><span>9:41</span><span class="icons">▂▄▆ ▮</span></div>
+      <div class="body" style="gap:9px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+          <div>
+            <div style="font-size:22px;font-weight:800">Olá, Maria</div>
+            <div style="font-size:13px;color:#50625b">Novembro de 2026</div>
+          </div>
+          <div style="color:#1f6b52;margin-top:4px"><svg class="i" style="width:22px;height:22px"><use href="#bell"/></svg></div>
+        </div>
+
+        <div class="card" style="background:#fff6e0;border-color:#f1d48a">
+          <div style="display:flex;gap:7px;align-items:center;color:#9a6200;font-weight:700;font-size:13px">
+            <svg class="i"><use href="#alert"/></svg>Alerta da semana
+          </div>
+          <div style="font-size:13px;margin-top:4px;line-height:1.3">Golpe do <b>falso parente</b> pedindo Pix pelo WhatsApp.</div>
+          <div class="link" style="margin-top:4px">Saiba como se proteger</div>
+        </div>
+
+        <div style="font-size:14px;font-weight:700;margin-top:2px">Recebeu algo estranho?</div>
+        <div class="btn primary" style="height:50px;font-size:15.5px"><svg class="i"><use href="#link"/></svg>Verificar link ou mensagem</div>
+        <div class="btn outline"><svg class="i"><use href="#news"/></svg>Verificar notícia</div>
+
+        <div style="display:flex;gap:8px">
+          <div class="card" style="flex:1;display:flex;flex-direction:column;gap:3px">
+            <div style="color:#1f6b52"><svg class="i" style="width:22px;height:22px"><use href="#play"/></svg></div>
+            <div style="font-size:13px;font-weight:700">Aprender</div>
+            <div style="font-size:11px;color:#6c7b76">Vídeos curtos</div>
+          </div>
+          <div class="card" style="flex:1;display:flex;flex-direction:column;gap:3px">
+            <div style="color:#1f6b52"><svg class="i" style="width:22px;height:22px"><use href="#users"/></svg></div>
+            <div style="font-size:13px;font-weight:700">Minha família</div>
+            <div style="font-size:11px;color:#6c7b76">Pessoas de confiança</div>
+          </div>
+        </div>
+        <div class="card" style="display:flex;align-items:center;gap:10px">
+          <div style="color:#1f6b52"><svg class="i" style="width:22px;height:22px"><use href="#chat"/></svg></div>
+          <div>
+            <div style="font-size:13px;font-weight:700">Falar com uma pessoa</div>
+            <div style="font-size:11px;color:#6c7b76">Atendimento pelo WhatsApp</div>
+          </div>
+        </div>
+      </div>
+      <div class="nav">
+        <div class="on"><svg class="i"><use href="#home"/></svg>Início</div>
+        <div><svg class="i"><use href="#search"/></svg>Verificar</div>
+        <div><svg class="i"><use href="#play"/></svg>Aprender</div>
+        <div><svg class="i"><use href="#help"/></svg>Ajuda</div>
+      </div>
+    </div></div>
+    <p class="caption">Ela vê o <b>alerta da semana</b> e lembra de uma mensagem que recebeu. Toca em <b>Verificar</b>.</p>
+  </div>
+
+  <!-- 03 VERIFICAR -->
+  <div class="col">
+    <div class="tag"><b>03</b>Verificar mensagem</div>
+    <div class="phone"><div class="screen">
+      <div class="status"><span>9:41</span><span class="icons">▂▄▆ ▮</span></div>
+      <div class="body" style="gap:9px">
+        <div style="display:flex;align-items:center;gap:4px;color:#1f6b52;font-size:13px;font-weight:600">
+          <svg class="i" style="width:16px;height:16px"><use href="#back"/></svg>Voltar
+        </div>
+        <div style="font-size:20px;font-weight:800;text-align:center">Verificar mensagem</div>
+        <div style="font-size:13px;color:#50625b;text-align:center;line-height:1.3">Cole, fale ou tire foto do que você recebeu.</div>
+
+        <div style="display:flex;gap:7px">
+          <div class="btn outline" style="flex:1;flex-direction:column;height:58px;gap:2px;font-size:12px"><svg class="i"><use href="#clip"/></svg>Colar</div>
+          <div class="btn outline" style="flex:1;flex-direction:column;height:58px;gap:2px;font-size:12px"><svg class="i"><use href="#mic"/></svg>Falar</div>
+          <div class="btn outline" style="flex:1;flex-direction:column;height:58px;gap:2px;font-size:12px"><svg class="i"><use href="#play"/></svg>Foto da tela</div>
+        </div>
+
+        <div class="label" style="margin:2px 0 0">Mensagem recebida</div>
+        <div class="card" style="background:#e9f6ee;border-color:#c5e3d1;font-size:13.5px;line-height:1.38;color:#1c2b26">
+          <div style="font-size:11px;color:#6c7b76;margin-bottom:3px">WhatsApp • número desconhecido</div>
+          Oi mãe, troquei de número! Preciso pagar uma conta urgente hoje, me faz um Pix de R$ 1.500? Depois te devolvo. Entra aqui: <span style="color:#1565c0;text-decoration:underline">bit.ly/pagto-urg</span>
+        </div>
+
+        <div class="btn primary" style="height:50px;margin-top:4px;font-size:16px"><svg class="i"><use href="#search"/></svg>Verificar agora</div>
+        <div style="font-size:11.5px;color:#6c7b76;text-align:center;line-height:1.3">Seus dados ficam protegidos. Não clicamos no link por você.</div>
+      </div>
+      <div class="nav">
+        <div><svg class="i"><use href="#home"/></svg>Início</div>
+        <div class="on"><svg class="i"><use href="#search"/></svg>Verificar</div>
+        <div><svg class="i"><use href="#play"/></svg>Aprender</div>
+        <div><svg class="i"><use href="#help"/></svg>Ajuda</div>
+      </div>
+    </div></div>
+    <p class="caption">Maria <b>cola a mensagem</b> do WhatsApp (ou fala por voz) e pede a verificação.</p>
+  </div>
+
+  <!-- 04 RESULTADO -->
+  <div class="col">
+    <div class="tag"><b>04</b>Resultado</div>
+    <div class="phone"><div class="screen">
+      <div class="status"><span>9:41</span><span class="icons">▂▄▆ ▮</span></div>
+      <div class="body" style="gap:8px">
+        <div style="background:#fdecea;border:1.5px solid #ef9a9a;border-radius:14px;padding:12px;text-align:center">
+          <div style="color:#c62828;display:flex;justify-content:center"><svg class="i" style="width:40px;height:40px"><use href="#alert"/></svg></div>
+          <div style="font-size:21px;font-weight:800;color:#b71c1c;margin-top:2px">Cuidado!</div>
+          <div style="font-size:15px;font-weight:700;color:#b71c1c">Isso parece golpe.</div>
+        </div>
+
+        <div style="font-size:13.5px;font-weight:700">Por que achamos isso:</div>
+        <div style="font-size:12.5px;line-height:1.4;display:flex;flex-direction:column;gap:3px">
+          <div>• Pede <b>dinheiro com urgência</b>.</div>
+          <div>• Diz ser parente com <b>número novo</b>.</div>
+          <div>• Tem um <b>link desconhecido</b>.</div>
+        </div>
+
+        <div class="card" style="background:#f3f6f5;font-size:12.5px;line-height:1.35">
+          <b>O que fazer:</b> não clique, não faça o Pix. Ligue para o seu filho no número antigo.
+        </div>
+
+        <div class="btn primary" style="height:46px"><svg class="i"><use href="#users"/></svg>Avisar minha família</div>
+        <div class="btn outline"><svg class="i"><use href="#flag"/></svg>Como denunciar</div>
+        <div style="text-align:center;margin-top:2px"><span class="link">Voltar ao início</span></div>
+      </div>
+      <div class="nav">
+        <div><svg class="i"><use href="#home"/></svg>Início</div>
+        <div class="on"><svg class="i"><use href="#search"/></svg>Verificar</div>
+        <div><svg class="i"><use href="#play"/></svg>Aprender</div>
+        <div><svg class="i"><use href="#help"/></svg>Ajuda</div>
+      </div>
+    </div></div>
+    <p class="caption">O app explica <b>por que</b> é golpe, o que fazer, e ela <b>avisa a família</b> com um toque.</p>
+  </div>
+
+</div>
+</body>
+</html>
